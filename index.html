@@ -93,6 +93,37 @@ button{cursor:pointer;background:var(--card);font-weight:600;white-space:nowrap;
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 @media print{:root,:root[data-theme="dark"],:root[data-theme="light"]{--bg:#fff;--card:#fff;--ink:#111;--mute:#555;--line:#cbd1d9;--pri:#254d81;--priInk:#fff;--bad:#9b2633;--surface:#fff;--soft:#f0f3f7;--table-head:#edf1f6;--shadow:none;color-scheme:light}body{background:#fff!important;color:#111}main{max-width:none;padding:0}.card,.qxhero{box-shadow:none;break-inside:auto}.qxhero:before{display:none}.qxstats{gap:8px}.qxnotice{font-size:10px}header,nav,.sub,#qxstatus,.noprint{display:none!important}.tw,.qxhero~.card>.tw{max-height:none!important;overflow:visible!important;border-radius:0}th,td{padding:7px 9px}.tw thead th{position:static}.qxoverlay{backdrop-filter:none;background:none}.qxoverlay>.card{max-height:none;overflow:visible;box-shadow:none}a{color:#254d81}}
 </style>
+<style id="qr-align">
+/* ===== 열·정렬 통일 (창/입력/버튼의 높이·간격·기준선을 맞춤) ===== */
+.row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 12px}
+.row>b,.row>h3,.row>h4,.row>span,.row>p,.row>div:not(.qxfield){align-self:center;margin-top:0;margin-bottom:0}
+.row>label:not(.qxfield):not(.bkchk){display:flex;flex-direction:column;align-items:stretch;gap:6px;flex:0 1 180px;min-width:150px;margin:0;font-size:12px;color:var(--mute)}
+.row>label:not(.qxfield):not(.bkchk)>input:not([type=checkbox]):not([type=radio]),.row>label:not(.qxfield):not(.bkchk)>select{width:100%;min-width:0}
+.row>label:has(>input[type=checkbox]),.row>label:has(>input[type=radio]),.bkchk{flex-direction:row!important;align-items:center;flex:0 0 auto!important;min-width:0!important;gap:6px;align-self:center}
+.bkchk{display:flex;margin-top:12px;font-size:13px;color:var(--ink)}
+.row>label.bkfile{flex:0 1 320px}
+.row>input:not([type=checkbox]):not([type=radio]):not([type=file]),.row>select{flex:0 1 180px;min-width:130px;width:auto}
+.qxfield{flex:0 1 180px;min-width:150px;justify-content:flex-end}
+.qxfield input,.qxfield select{width:100%;max-width:none}
+input:not([type=checkbox]):not([type=radio]):not([type=file]),select,button{height:38px;min-height:38px;box-sizing:border-box}
+button{display:inline-flex;align-items:center;justify-content:center;line-height:1.2}
+.row>button{flex:0 0 auto}
+td button,th button,.qxmessage button,nav button,.sub button{height:auto}
+td input,td select{height:34px;min-height:34px}
+td button{min-height:30px;padding:4px 10px}
+input[type=file]{height:auto;min-height:38px}
+header{align-items:center}
+header select,header button{height:34px;min-height:34px}
+header .mute{align-self:center}
+th,td{vertical-align:middle}
+th.n,td.n{text-align:right}
+@media(max-width:600px){
+ .row>label:not(.qxfield):not(.bkchk),.qxfield,.row>input:not([type=checkbox]):not([type=radio]):not([type=file]),.row>select{flex:1 1 calc(50% - 6px);min-width:130px}
+ .row>label.bkfile{flex:1 1 100%}
+ .row>button{flex:0 0 auto}
+ header select{flex:1 1 120px;max-width:none}
+}
+</style>
 </head><body>
 <header><h1 style="display:flex;align-items:center;gap:8px"><svg width="30" height="30" viewBox="0 0 13 13" fill="var(--pri)" role="img" aria-label="큐알장부 로고"><g id="qf"><path fill-rule="evenodd" d="M0 0h5v5H0zM1 1v3h3V1z"/><rect x="2" y="2" width="1" height="1"/></g><use href="#qf" x="8"/><use href="#qf" y="8"/><rect x="6" y="1" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="5" y="5" width="1" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="3" y="6" width="1" height="1"/><rect x="9" y="6" width="1" height="1"/><rect x="11" y="6" width="1" height="1"/><rect x="6" y="7" width="1" height="1"/><rect x="6" y="9" width="1" height="1"/><rect x="8" y="8" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="12" y="8" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="11" y="11" width="1" height="1"/><rect x="6" y="11" width="1" height="1"/><rect x="12" y="12" width="1" height="1"/></svg>큐알장부 - 스마트 회계 프로그램</h1>
 <select id="co" onchange="sw(this.value)"></select><select id="pe" onchange="pSw(+this.value)"></select>
@@ -233,60 +264,183 @@ function acList(){return `<div class="card"><div class="row"><input id="nc" type
 function addA(){if(!nc.value||!nn.value)return;if(acc(nc.value).name!='?')return alert('이미 있는 코드입니다.');C().accounts.push({code:+nc.value,name:nn.value,type:nt.value});save();draw()}
 function paList(){return `<div class="card"><div class="row"><input id="np" placeholder="거래처명"><button class="p" onclick="if(np.value){C().partners.push(np.value);save();draw()}">추가</button></div><div class="tw"><table>${C().partners.map((p,i)=>`<tr><td>${e(p)}<td><button class="d" onclick="C().partners.splice(${i},1);save();draw()">삭제</button></tr>`).join('')||'<tr><td class=mute>등록된 거래처가 없습니다.</tr>'}</table></div></div>`}
 function opening(){return `<div class="card"><p class="mute">회기 시작일(${pr().s}) 자로 최초잔액 전표를 만듭니다. 전표 입력에서 일자를 ${pr().s}로 하고 적요에 "기초잔액"으로 입력하세요.</p><button class="p" onclick="tab='전표';sub='전표 입력';draw();vd.value='${pr().s}';vm.value='기초잔액'">기초잔액 전표 입력하기</button></div>`}
-function bk(){return bkCard()+`<div class="card"><p>데이터는 이 브라우저에만 저장되며 서버로 전송되지 않습니다. 정기적으로 백업하세요.</p><div class="row"><button class="p" onclick="exp()">백업 내려받기</button>${navigator.share?'<button onclick="expShare()">백업 파일 공유</button>':''}<label>복원 <input type="file" accept=".json,application/json,text/plain" onchange="imp(this.files[0])"></label><button class="d" onclick="if(confirm('현재 회사의 전표를 모두 삭제할까요?')){C().vouchers=[];save();draw()}">전표 전체 삭제</button></div>${IS_MOBILE?'<p class="mute">안드로이드에서는 폴더 자동저장 대신 <b>백업 파일 공유</b> 또는 <b>백업 내려받기</b>로 qr-backup.json을 내보내고, 다른 기기에서는 <b>복원</b>으로 불러오면 데이터가 이어집니다.</p>':''}</div>`}
+/* ===== 백업·복원 (v3) : 변경 시에만 자동백업 · 날짜시간 파일 · 공유폴더 최신본 복원 ===== */
+function bk(){return bkCard()+`<div class="card"><h4 style="margin:0 0 8px">복원 및 데이터 관리</h4><p class="mute">데이터는 이 브라우저에만 저장되며 서버로 전송되지 않습니다. 백업 폴더를 지정하고 정기적으로 백업하세요.</p><div class="row bkrow"><label class="bkfile">파일에서 복원<input type="file" accept=".json,application/json,text/plain" onchange="imp(this.files[0]);this.value=''"></label><button class="d" onclick="if(confirm('현재 회사의 전표를 모두 삭제할까요?')){C().vouchers=[];save();draw()}">전표 전체 삭제</button></div></div>`}
 var DH=null,BT=null,BKMSG='',IS_MOBILE=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 const idb=(m,v)=>new Promise((res,rej)=>{const r=indexedDB.open('sulsul-bk',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>{const st=r.result.transaction('k',m=='get'?'readonly':'readwrite').objectStore('k'),q=m=='get'?st.get('dir'):m=='set'?st.put(v,'dir'):st.delete('dir');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)};r.onerror=()=>rej(r.error)});
 function setSt(t){BKMSG=t;const x=document.getElementById('bkst');if(x)x.textContent=t;const y=document.getElementById('bkm');if(y)y.textContent=t}
-var BKGRANTED=false,BKDIRTY=false,BKLOCK=false;
+var BKGRANTED=false,BKLOCK=false,BKCHK=false,BKREADY=false,BKSIGLAST='',BKLATEST=null,BKDECLINED='',BKLASTCHK=0;
+var BK_KEEP=50,BK_RE=/^qr-backup_(\d{4})-(\d{2})-(\d{2})_(\d{2})(\d{2})(\d{2})\.json$/;
+var K_SIG='qr-bk-sig',K_MOD='qr-bk-mod',K_SYNC='qr-bk-sync',K_DEV='qr-bk-dev';
+function lsg(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lss(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
+/* 데이터 지문: 실제 내용이 바뀌었는지만 판별 (현재 회사 전환·화면 갱신은 변경으로 보지 않음) */
+function bkSig(o){o=o||S;let s;try{s=JSON.stringify(o,function(k,v){return(this===o&&(k==='cur'||k==='_bk'))?undefined:v})}catch(e){return ''}let a=0x811c9dc5,b=5381;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a^=c;a=Math.imul(a,16777619);b=((b<<5)+b+c)|0}return s.length+':'+(a>>>0).toString(36)+(b>>>0).toString(36)}
+function bkIsDirty(){return bkSig()!==lsg(K_SIG)}
+function bkFmt(ms){const d=new Date(+ms),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())}
+function bkName(d){const p=n=>String(n).padStart(2,'0');return 'qr-backup_'+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())+'.json'}
+function bkDevice(){let v=lsg(K_DEV);if(!v){v=(IS_MOBILE?'폰-':'PC-')+Math.random().toString(36).slice(2,6);lss(K_DEV,v)}return v}
+function bkSummary(d){return Object.keys(d.cos).map(k=>'· '+(d.cos[k].name||k)+' — 전표 '+((d.cos[k].vouchers||[]).length).toLocaleString('ko-KR')+'건').join('\n')}
+function bkInit(){
+  /* 이 버전을 처음 쓰는 기존 사용자: 현재 데이터를 '백업 완료' 기준으로 삼아 옛 백업 파일이 복원 안내로 뜨지 않게 함 */
+  if(lsg(K_SIG)===null){lss(K_SIG,bkSig());lss(K_MOD,QXFRESH?0:Date.now());lss(K_SYNC,QXFRESH?0:Date.now())}
+  BKSIGLAST=bkSig();BKREADY=true;
+}
 async function permState(){if(!DH)return 'none';try{return await DH.queryPermission({mode:'readwrite'})}catch(e){return 'denied'}}
-async function perm(ask){if(!DH)return false;const p=await permState();if(p==='granted'){BKGRANTED=true;return true}if(!ask)return false;try{BKGRANTED=(await DH.requestPermission({mode:'readwrite'}))==='granted';return BKGRANTED}catch(e){return false}}
+async function perm(ask){if(!DH)return false;const p=await permState();if(p==='granted'){BKGRANTED=true;return true}BKGRANTED=false;if(!ask)return false;try{BKGRANTED=(await DH.requestPermission({mode:'readwrite'}))==='granted';return BKGRANTED}catch(e){return false}}
+/* ---- 폴더 목록·읽기 ---- */
+async function bkList(){
+  const out=[];
+  for await(const [name,h] of DH.entries()){
+    if(h.kind!=='file')continue;
+    const m=BK_RE.exec(name);
+    if(m){out.push({name,h,ts:new Date(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+m[6]).getTime()});continue}
+    if(/^qr-backup.*\.json$/i.test(name)){try{const f=await h.getFile();out.push({name,h,ts:f.lastModified,legacy:true})}catch(e){}}
+  }
+  out.sort((a,b)=>b.ts-a.ts);return out;
+}
+async function bkRead(c){
+  try{const f=await c.h.getFile(),d=JSON.parse(await f.text());if(!d||!d.cos||!Object.keys(d.cos).length)return null;const m=d._bk||{};delete d._bk;return{d,name:c.name,key:c.name+'|'+c.ts,savedAt:+m.savedAt||c.ts,device:m.device||''}}catch(e){return null}
+}
+async function bkLatest(){
+  const l=await bkList();
+  if(!l.length)return null;
+  if(BKLATEST&&BKLATEST.key===l[0].name+'|'+l[0].ts)return BKLATEST;
+  for(let i=0;i<Math.min(l.length,5);i++){const it=await bkRead(l[i]);if(it)return it}
+  return null;
+}
+async function bkPrune(){
+  try{const l=(await bkList()).filter(c=>!c.legacy);for(let i=BK_KEEP;i<l.length;i++){try{await DH.removeEntry(l[i].name)}catch(e){}}}catch(e){}
+}
+/* ---- 백업 쓰기: manual=true(지금 백업)는 변경 없어도 새 파일 생성, 자동은 변경이 있을 때만 ---- */
+async function wr(manual){
+  if(!DH){if(manual)alert('먼저 백업 폴더를 선택해 주세요.');return false}
+  if(!(await perm(!!manual))){if(manual){setSt('⚠ 폴더 권한을 허용해야 백업할 수 있습니다.');bkPermPop()}return false}
+  if(!manual&&!bkIsDirty())return false;
+  if(BKLOCK)return false;
+  BKLOCK=true;
+  try{
+    clearTimeout(BT);
+    const now=new Date(),ts=now.getTime(),sig=bkSig(),name=bkName(now);
+    const body=JSON.stringify(Object.assign({},S,{_bk:{savedAt:ts,device:bkDevice(),v:3}}));
+    const fh=await DH.getFileHandle(name,{create:true});const w=await fh.createWritable();await w.write(body);await w.close();
+    lss(K_SIG,sig);lss(K_SYNC,ts);BKLATEST=null;
+    setSt('✓ '+(manual?'백업 완료 ':'자동백업 ')+bkFmt(ts).slice(11)+' · '+name);
+    await bkPrune();
+    return true;
+  }catch(e){setSt('⚠ 백업 실패: '+e.message);return false}
+  finally{BKLOCK=false}
+}
+async function bkNow(){await wr(true);BKLATEST=null;bkMenu()}
+function bkAuto(){wr(false)}
+/* 저장될 때마다 호출됨 — 내용이 실제로 바뀐 경우에만 변경 시각 기록 및 자동백업 예약 */
+function autoBk(){
+  if(!BKREADY)return;
+  const sig=bkSig();
+  if(sig===BKSIGLAST)return;
+  BKSIGLAST=sig;lss(K_MOD,Date.now());
+  if(!DH)return;
+  clearTimeout(BT);
+  if(sig!==lsg(K_SIG))BT=setTimeout(bkAuto,3000);
+}
+function bkFlush(){if(!DH||!bkCloseOn()||!BKGRANTED)return;if(!bkIsDirty())return;try{const p=wr(false);if(p&&p.catch)p.catch(function(){})}catch(e){}}
+/* ---- 최신 백업 인식·복원 ---- */
+function bkApply(it){
+  try{localStorage.setItem('qr-ledger-prerestore',JSON.stringify(S))}catch(e){}
+  S=it.d;mig();if(!S.cos[S.cur])S.cur=Object.keys(S.cos)[0];
+  qbaseSave();
+  BKSIGLAST=bkSig();lss(K_SIG,BKSIGLAST);lss(K_MOD,it.savedAt);lss(K_SYNC,it.savedAt);clearTimeout(BT);
+  setSt('✓ 복원 완료 · '+bkFmt(it.savedAt));draw();
+}
+function bkAskRestore(it){
+  const mod=+lsg(K_MOD)||0,dirty=bkIsDirty();
+  const msg='백업 폴더의 최신 백업을 복원할까요?\n\n파일: '+it.name+'\n저장 시각: '+bkFmt(it.savedAt)+(it.device?' ('+it.device+')':'')+'\n이 PC 마지막 변경: '+(mod?bkFmt(mod):'기록 없음')+'\n\n'+bkSummary(it.d)+'\n\n현재 데이터는 모두 이 백업으로 교체됩니다.'+(dirty?'\n⚠ 이 PC에는 백업되지 않은 변경이 있습니다. (교체 직전 데이터는 브라우저에 임시 보관됩니다)':'');
+  if(!confirm(msg)){BKDECLINED=it.name;return false}
+  bkApply(it);return true;
+}
+/* mode: boot/focus/allow = 다른 PC가 마지막 동기화 이후 저장한 백업이 있으면 안내, pick = 폴더 선택 직후, manual = 최신 백업 복원 버튼 */
+async function bkCheck(mode){
+  if(!DH||BKCHK)return;
+  if(!(await perm(false))){if(mode==='manual'){bkPermPop()}return}
+  BKCHK=true;
+  try{
+    const it=await bkLatest();BKLATEST=it;bkInfoPaint();
+    if(!it){if(mode==='manual')alert('백업 폴더에서 복원할 수 있는 백업 파일을 찾지 못했습니다.');return}
+    if(mode==='manual'){bkAskRestore(it);return}
+    const sync=+lsg(K_SYNC)||0,mod=+lsg(K_MOD)||0;
+    if(bkSig(it.d)===bkSig()){lss(K_SYNC,Math.max(sync,it.savedAt));return}
+    const empty=!Object.values(S.cos).some(c=>(c.vouchers||[]).length);
+    if(mode==='pick'){if(!empty&&it.savedAt<=mod)return}
+    else if(it.savedAt<=sync)return;
+    if(BKDECLINED===it.name)return;
+    bkAskRestore(it);
+  }catch(e){}finally{BKCHK=false}
+}
+async function bkRestoreLatest(){await bkCheck('manual')}
+function bkInfoHtml(){
+  if(!DH)return '';
+  if(!BKLATEST)return '폴더 최신 백업: 확인 중이거나 아직 없음';
+  return '폴더 최신 백업: <b>'+e(BKLATEST.name)+'</b> · 저장 '+bkFmt(BKLATEST.savedAt)+(BKLATEST.device?' ('+e(BKLATEST.device)+')':'');
+}
+function bkInfoPaint(){const x=document.getElementById('bkinfo');if(x)x.innerHTML=bkInfoHtml()}
+async function bkInfoRefresh(){if(!DH)return;try{if(await perm(false)){BKLATEST=await bkLatest()}}catch(e){}bkInfoPaint()}
+/* ---- 폴더 선택·권한: 이 단계에서는 백업하지 않고 파일도 만들지 않음 ---- */
 async function bkBoot(){
   try{const h=await idb('get');if(h)DH=h}catch(e){}
   if(!DH){setSt('');return}
-  if(await perm(false)){BKMSG='✓ 백업 폴더 자동 연결';setSt(BKMSG);await wr(true);return}
-  BKMSG='⚠ 백업 권한 확인 필요';setSt(BKMSG);
-  try{if(await perm(true)){BKMSG='✓ 백업 권한 허용됨';setSt(BKMSG);await wr(true);return}}catch(e){}
+  if(await perm(false)){setSt('✓ 백업 폴더 연결됨');await bkCheck('boot');return}
+  setSt('⚠ 백업 권한 확인 필요');
+  try{if(await perm(true)){setSt('✓ 백업 권한 허용됨');await bkCheck('allow');return}}catch(e){}
   bkPermPop();
 }
 function bkPermPop(){
   if(document.getElementById('bkperm'))return;
   const d=document.createElement('div');d.id='bkperm';
   d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:999';
-  d.innerHTML='<div class="card" style="max-width:430px;margin:16px"><h3 style="margin:0 0 8px">백업 폴더 권한 허용</h3><p style="font-size:13px;color:var(--mute);margin:0 0 16px">백업 폴더가 지정되어 있지만 지금은 권한이 꺼져 있습니다. <b>권한 허용</b>을 누르면 브라우저 권한 창이 열리고, 허용하면 전표 저장 시와 프로그램을 닫을 때 그 폴더의 <b>qr-backup.json</b>에 자동 백업됩니다.</p><div class="row"><button class="p" onclick="bkPermGrant()">권한 허용</button></div></div>';
+  d.innerHTML='<div class="card" style="max-width:430px;margin:16px"><h3 style="margin:0 0 8px">백업 폴더 권한 허용</h3><p style="font-size:13px;color:var(--mute);margin:0 0 16px">백업 폴더가 지정되어 있지만 지금은 권한이 꺼져 있습니다. <b>권한 허용</b>을 눌러도 백업 파일은 만들어지지 않으며, 이후 데이터가 변경될 때 그 폴더에 자동 백업됩니다.</p><div class="row bkrow"><button class="p" onclick="bkPermGrant()">권한 허용</button><button onclick="bkPermClose()">닫기</button></div></div>';
   document.body.appendChild(d);
 }
 function bkPermClose(){const x=document.getElementById('bkperm');if(x)x.remove()}
 async function bkPermGrant(){bkPermClose();await bkAllow()}
-async function bkAllow(){if(!DH)return;if(await perm(true)){BKMSG='✓ 백업 권한 허용됨';setSt(BKMSG);await wr(true)}else{BKMSG='⚠ 권한이 거부되었습니다. 주소창 왼쪽 아이콘에서 폴더 권한을 다시 허용해 주세요.';setSt(BKMSG)}bkMenu()}
+async function bkAllow(){
+  if(!DH)return;
+  if(await perm(true)){setSt('✓ 백업 권한 허용됨 (백업 파일은 만들지 않았습니다)');await bkCheck('allow')}
+  else setSt('⚠ 권한이 거부되었습니다. 주소창 왼쪽 아이콘에서 폴더 권한을 다시 허용해 주세요.');
+  bkMenu();
+}
 function bkMenu(){try{if(typeof draw==='function')draw()}catch(e){}}
 function bkCloseOn(){return !S||!S.qsettings||S.qsettings.closeBackup!==false}
 function bkSetClose(v){if(!S.qsettings)S.qsettings={};S.qsettings.closeBackup=!!v;save();setSt(v?'✓ 종료 시 자동백업 켜짐':'종료 시 자동백업 꺼짐');draw()}
-function bkFlush(){if(!DH||!bkCloseOn())return;if(!BKDIRTY)return;try{const p=wr(true);if(p&&p.catch)p.catch(function(){})}catch(e){}}
-async function wr(force){
-  if(!DH)return false;
-  if(!(await perm(false)))return false
-  if(BKLOCK)return false;
-  BKLOCK=true;
-  try{const fh=await DH.getFileHandle('qr-backup.json',{create:true});const w=await fh.createWritable();await w.write(JSON.stringify(S));await w.close();BKDIRTY=false;BKMSG='✓ 자동백업 '+new Date().toLocaleTimeString('ko-KR');setSt(BKMSG);return true}
-  catch(e){setSt('⚠ 백업 실패: '+e.message);return false}
-  finally{BKLOCK=false}
+async function pickDir(){
+  if(!window.showDirectoryPicker)return alert('이 브라우저는 폴더 자동저장을 지원하지 않습니다.'+(IS_MOBILE?' 안드로이드에서는 PC가 공유 폴더에 저장한 최신 백업 파일을 아래 [파일에서 복원]으로 불러오세요.':' PC의 Chrome 또는 Edge를 사용하세요.'));
+  try{
+    const h=await showDirectoryPicker({mode:'readwrite'});
+    DH=h;await idb('set',DH);BKGRANTED=true;BKLATEST=null;BKDECLINED='';
+    lss(K_SIG,bkSig());clearTimeout(BT);   /* 선택만으로는 백업하지 않음 */
+    setSt('✓ 백업 폴더 지정됨 · 변경 시 자동 백업, 바로 만들려면 [지금 백업]');
+    await bkCheck('pick');
+    bkMenu();
+  }catch(e){if(e.name!='AbortError')alert('폴더를 열 수 없습니다. 미리보기 창 안에서는 막힐 수 있으니 링크를 새 탭에서 열어 주세요.\n'+e.message)}
 }
-function autoBk(){if(!DH)return;BKDIRTY=true;clearTimeout(BT);BT=setTimeout(function(){wr()},300)}
-async function pickDir(){if(!window.showDirectoryPicker)return alert('이 브라우저는 폴더 자동저장을 지원하지 않습니다.'+(IS_MOBILE?' 안드로이드에서는 백업 파일 공유·내려받기로 백업하고, 다른 기기에서 복원하면 데이터가 이어집니다.':' PC의 Chrome 또는 Edge를 사용하세요.'));try{DH=await showDirectoryPicker({mode:'readwrite'});await idb('set',DH);BKGRANTED=true;BKDIRTY=true;await wr(true);draw()}catch(e){if(e.name!='AbortError')alert('폴더를 열 수 없습니다. 미리보기 창 안에서는 막힐 수 있으니 링크를 새 탭에서 열어 주세요.\n'+e.message)}}
-async function bkAsk(){await wr(true);draw()}
-async function noDir(){DH=null;try{await idb('del')}catch(e){}setSt('');draw()}
+async function bkAsk(){if(DH&&!(await perm(false)))bkPermPop();else bkMenu()}
+async function noDir(){clearTimeout(BT);DH=null;BKLATEST=null;try{await idb('del')}catch(e){}setSt('');draw()}
 function bkCard(){
   const closeOn=bkCloseOn();
-  const state=!DH?'<span class="mute">지정된 폴더 없음</span>':(BKGRANTED?'<span class="ok">✓ 권한 허용됨 · 전표 저장·종료 시 자동 백업</span>':'<span class="mute">⚠ 권한 확인 필요 — <b>권한 허용</b> 버튼을 눌러 주세요</span>');
+  const state=!DH?'<span class="mute">지정된 폴더 없음</span>':(BKGRANTED?'<span class="ok">✓ 권한 허용됨 · 데이터가 변경될 때만 자동 백업</span>':'<span class="mute">⚠ 권한 확인 필요 — <b>권한 허용</b> 버튼을 눌러 주세요</span>');
+  setTimeout(bkInfoRefresh,0);
   return `<div class="card"><h4 style="margin:0 0 8px">자동 백업 폴더</h4>
-  <p class="mute">폴더를 지정하면 <b>전표를 저장할 때마다</b>, 그리고 <b>프로그램을 닫을 때</b> 그 폴더의 <b>qr-backup.json</b> 파일에 덮어씁니다. 앱을 다시 열어 권한이 꺼져 있으면 <b>권한 허용</b> 버튼을 눌러 다시 허용하세요.</p>
-  <div class="row"><button class="p" onclick="pickDir()">백업 폴더 선택</button>${DH?`<button onclick="bkAllow()">권한 허용</button><button onclick="wr(true)">지금 백업</button><button class="d" onclick="noDir()">연결 해제</button>`:''}</div>
+  <p class="mute">폴더를 지정하면 <b>데이터가 변경됐을 때만</b>, 그리고 변경이 있는 상태에서 <b>프로그램을 닫을 때</b> 폴더에 <b>qr-backup_날짜_시간.json</b> 파일이 새로 저장됩니다(최근 ${BK_KEEP}개 보관). <b>폴더 선택·권한 허용만으로는 백업하지 않으며</b>, <b>지금 백업</b>은 변경이 없어도 바로 파일을 만듭니다.</p>
+  <p class="mute">여러 PC에서 같은 공유 폴더(OneDrive·구글 드라이브 등)를 지정하면, 다른 PC가 더 늦게 저장한 백업이 있을 때 열 때 복원 여부를 물어보고, <b>최신 백업 복원</b>으로 가장 최근 날짜·시간 파일을 불러옵니다.</p>
+  <div class="row bkrow"><button class="p" onclick="pickDir()">백업 폴더 선택</button>${DH?`<button onclick="bkAllow()">권한 허용</button><button class="p" onclick="bkNow()">지금 백업</button><button onclick="bkRestoreLatest()">최신 백업 복원</button><button class="d" onclick="noDir()">연결 해제</button>`:''}</div>
   <div id="bkm" class="${BKGRANTED?'ok':'mute'}" style="margin-top:8px">${state}</div>
-  ${DH?`<label style="display:flex;align-items:center;gap:8px;margin-top:10px"><input type="checkbox" ${closeOn?'checked':''} onchange="bkSetClose(this.checked)"> 프로그램을 닫을 때도 자동 백업 (권장)</label>`:''}
+  <div id="bkinfo" class="mute" style="margin-top:4px;font-size:12px">${bkInfoHtml()}</div>
+  ${DH?`<label class="bkchk"><input type="checkbox" ${closeOn?'checked':''} onchange="bkSetClose(this.checked)"> 프로그램을 닫을 때도 자동 백업 (변경이 있을 때만, 권장)</label>`:''}
   <p class="mute" style="font-size:13px;margin:8px 0 0">브라우저 보안 규칙상 폴더 접근은 세션마다 다시 확인될 수 있습니다. 백업이 동작하지 않으면 <b>권한 허용</b> 버튼을 눌러 주세요.</p></div>`+(IS_MOBILE?bkAndroid():'')}
-function bkAndroid(){return `<div class="card"><h4 style="margin:0 0 8px">안드로이드 연동 (폰 ↔ PC)</h4><p class="mute">안드로이드 크롬은 폴더 자동저장을 지원하지 않으므로, <b>qr-backup.json</b> 파일을 주고받아 두 기기의 데이터를 이어갑니다.</p><p><b>PC → 폰:</b> PC에서 '백업 내려받기' → 카카오톡 '나에게 보내기' 또는 Google Drive에 저장 → 폰에서 내려받은 뒤 이 화면의 <b>복원</b>에서 파일 선택.</p><p><b>폰 → PC:</b> 이 화면의 '백업 파일 공유' 버튼 → 드라이브·카톡·파일 앱으로 저장 → PC의 '복원'에서 선택.</p><p class="mute">같은 폰이라도 파일을 여는 경로가 바뀌면 이전 데이터가 보이지 않을 수 있습니다. 사용이 끝나면 반드시 백업 파일을 내보내 두세요.</p></div>`}
-bkBoot();
-addEventListener('pagehide',bkFlush);addEventListener('beforeunload',bkFlush);document.addEventListener('visibilitychange',function(){if(document.visibilityState=='hidden')bkFlush()});document.addEventListener('freeze',bkFlush);
+function bkAndroid(){return `<div class="card"><h4 style="margin:0 0 8px">안드로이드 연동 (폰 ↔ PC)</h4><p class="mute">안드로이드 크롬은 폴더 자동저장을 지원하지 않습니다. PC가 공유 폴더에 저장한 가장 최근 <b>qr-backup_날짜_시간.json</b> 파일을 아래 <b>파일에서 복원</b>으로 선택하면 데이터를 이어서 사용할 수 있습니다.</p><p class="mute">같은 폰이라도 파일을 여는 경로가 바뀌면 이전 데이터가 보이지 않을 수 있습니다.</p></div>`}
+bkInit();bkBoot();
+addEventListener('pagehide',bkFlush);addEventListener('beforeunload',bkFlush);
+document.addEventListener('visibilitychange',function(){if(document.visibilityState=='hidden')bkFlush();else if(Date.now()-BKLASTCHK>20000){BKLASTCHK=Date.now();bkCheck('focus')}});
+document.addEventListener('freeze',bkFlush);
 var CF=null;
 const g=id=>document.getElementById(id);
 const OPT=(a,v)=>a.map(x=>`<option ${x==v?'selected':''}>${x}</option>`).join('');
@@ -685,9 +839,7 @@ function bsq(){fsReset();const p=pr(),m=sumsE(FS.e);let pv=null,pvE='',pnote='';
  <tr><th colspan=3 style="text-align:left">자본</th></tr>${E2.rows}<tr><td colspan=2>당기순이익<td class="n">${f(ni)}${pv?'<td class="n">—':''}</tr><tr class="t"><td colspan=2>자본 총계<td class="n">${f(E2.t+ni)}${pv?'<td class="n">'+f(E2.t0):''}</tr>
  <tr class="t"><td colspan=2>부채와 자본 총계<td class="n ${ok?'ok':'bad'}">${f(L2.t+E2.t+ni)}${pv?`<td class="n ${ok0?'ok':'bad'}">${f(L2.t0+E2.t0)}`:''}</tr></table>
  <div class="${ok?'ok':'bad'}">${ok?'✓ 당기: 자산총계 = 부채+자본총계 (일치)':'⚠ 당기: 자산총계와 부채+자본총계가 '+f(Math.abs(A2.t-(L2.t+E2.t+ni)))+'원 차이납니다.'}${pv?' · 전기 '+(ok0?'일치':'불일치'):''}</div></div>`+drillPop()}
-function exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download='qr-backup.json';a.click()}
-async function expShare(){try{const file=new File([JSON.stringify(S)],'qr-backup.json',{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'큐알장부 백업',text:'큐알장부 백업 파일 ('+ymd(new Date())+')'})}else exp()}catch(e){if(e&&e.name!=='AbortError')exp()}}
-function imp(file){if(!file)return;const r=new FileReader();r.onload=()=>{let d=null;try{d=JSON.parse(r.result)}catch(x){return alert('올바른 백업 파일이 아닙니다.')}if(!d||!d.cos||!Object.keys(d.cos).length)return alert('올바른 백업 파일이 아닙니다.');const sum=Object.keys(d.cos).map(k=>'· '+(d.cos[k].name||k)+' — 전표 '+((d.cos[k].vouchers||[]).length).toLocaleString('ko-KR')+'건').join('\n');if(!confirm('백업 파일 내용\n'+sum+'\n\n현재 브라우저의 모든 회사 데이터를 이 파일로 교체할까요?'))return;S=d;mig();if(!S.cos[S.cur])S.cur=Object.keys(S.cos)[0];save();draw()};r.readAsText(file)}
+function imp(file){if(!file)return;const r=new FileReader();r.onload=()=>{let d=null;try{d=JSON.parse(r.result)}catch(x){return alert('올바른 백업 파일이 아닙니다.')}if(!d||!d.cos||!Object.keys(d.cos).length)return alert('올바른 백업 파일이 아닙니다.');const m=d._bk||{};delete d._bk;if(!confirm('백업 파일 내용'+(m.savedAt?' (저장 '+bkFmt(m.savedAt)+')':'')+'\n'+bkSummary(d)+'\n\n현재 브라우저의 모든 회사 데이터를 이 파일로 교체할까요?'))return;try{localStorage.setItem('qr-ledger-prerestore',JSON.stringify(S))}catch(x){}S=d;mig();if(!S.cos[S.cur])S.cur=Object.keys(S.cos)[0];save();draw()};r.readAsText(file)}
 
 /* 큐알장부 확장 2.0 — 원본 저장 형식 유지, 회사별 ext 네임스페이스 */
 const QVER='2.0 · 웹 확장';
@@ -1305,7 +1457,7 @@ draw();
 if(IS_MOBILE&&QXFRESH)setTimeout(function(){
   const has=Object.values(S.cos).some(function(c){return (c.vouchers||[]).length>0})||Object.keys(S.cos).length>1;
   if(has)return;
-  if(confirm('이 기기에는 저장된 장부 데이터가 없습니다.\n다른 기기(PC 등)에서 내려받은 백업 파일(qr-backup.json)을 복원하면 데이터를 그대로 이어갈 수 있습니다.\n\n백업 파일을 선택할까요?')){
+  if(confirm('이 기기에는 저장된 장부 데이터가 없습니다.\nPC가 공유 폴더에 저장한 최신 백업 파일(qr-backup_날짜_시간.json)을 복원하면 데이터를 그대로 이어갈 수 있습니다.\n\n백업 파일을 선택할까요?')){
     const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json,text/plain';inp.onchange=function(){imp(inp.files[0])};inp.click();
   }
 },400);
